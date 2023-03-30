@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req,res,next) => {
+    // bcrypt.hash(req.body.aadhar, 10, (err, hash) => {
     bcrypt.hash(req.body.password, 10, (err, hash) => {
         if(err){
             return res.status(500).json({
@@ -21,9 +22,19 @@ router.post('/signup', (req,res,next) => {
                 error: 'Email is required'
             })
         }
-        else if(!req.body.address){
-            return res.status(503).json({
-                error: 'Address is required'
+        else if(!req.body.gender){
+            return res.status(504).json({
+                error: 'Gender is required'
+            })
+        }
+        else if(!req.body.dob){
+            return res.status(505).json({
+                error: 'DOB is required'
+            })
+        }
+        else if(!req.body.aadhar){
+            return res.status(506).json({
+                error: 'Aadhar is required'
             })
         }
         else if(!req.body.phone){
@@ -37,7 +48,9 @@ router.post('/signup', (req,res,next) => {
                 name: req.body.name,
                 email: req.body.email,
                 password: hash,
-                address: req.body.address,
+                gender: req.body.gender,
+                dob: req.body.dob,
+                aadhar: req.body.aadhar,
                 phone: req.body.phone
             })
 

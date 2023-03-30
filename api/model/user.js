@@ -11,8 +11,17 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
+    gender: {
         type: String,
+        required: true
+    },
+    dob: {
+        type: String,
+        required: true
+    },
+    aadhar: {
+        type: Number,
+        unique: true,
         required: true
     },
     phone: {
