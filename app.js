@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+
 const userRoutes = require('./api/route/user');
 
 // IgGTjZvjV5fJTfjf
@@ -34,4 +37,10 @@ app.use((req, res, next) => {
    })
 })
 
-module.exports = app;
+
+const server = http.createServer(app);
+
+server.listen(PORT,() => {
+    console.log(`Server running on port ${PORT}`);
+});
+
