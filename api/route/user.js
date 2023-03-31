@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const User = require('../model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 router.post('/signup', (req,res,next) => {
 
@@ -37,35 +38,75 @@ router.post('/signup', (req,res,next) => {
                 error: 'Aadhar is required'
             })
         }
+        else if(!req.body.pan){
+            return res.status(506).json({
+                error: 'PAN is required'
+            })
+        }
         else if(!req.body.phone){
             return res.status(503).json({
                 error: 'Phone no. is required'
             })
         }
-        {
-            const user = new User({
-                _id: new mongoose.Types.ObjectId(),
-                name: req.body.name,
-                email: req.body.email,
-                password: hash,
-                gender: req.body.gender,
-                dob: req.body.dob,
-                aadhar: req.body.aadhar,
-                phone: req.body.phone
-            })
 
-            user.save()
-            .then(result => {
-                console.log(result);
-                res.status(200).json({
-                    new_user : result
-                })
-            }).catch(err => {
-                res.status(500).json({
-                    error : err
-                })
+        const apiPan = 'https://api.emptra.com/pan/uIdai/V5';
+        var verifiedName = "";
+
+        axios.post(apiPan, {
+            "panNumber": req.body.pan
+        }, {
+            headers: {
+                'Content-Type':'application/json',
+                'Cache-Control': 'no-cache',
+                'Accept': '*/*',
+                'Connection':'keep-alive',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'clientId': 'b14a47320613dca60ad81af3b12aaeef:74604b2eb4b947fe298aaefdd7af8eb7',
+                'secretKey': 'CDvsxkLRH5H7n4ioHZzSmHcP8UW183prerQrQsJ49Rw5IabykUsnBoVlbB23ISlbJ'
+            }
+        }).then((response) => {
+            const verifiedName = response.data.result.name_on_card;
+
+            console.log(verifiedName);
+
+        if(verifiedName.toLowerCase() != (req.body.name).toLowerCase()){
+            return res.status(507).json({
+                error: 'Name does not match with Aadhar'
             })
+        }else{
+            {
+                const user = new User({
+                    _id: new mongoose.Types.ObjectId(),
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hash,
+                    gender: req.body.gender,
+                    dob: req.body.dob,
+                    aadhar: req.body.aadhar,
+                    pan: req.body.pan,
+                    phone: req.body.phone
+                })
+    
+                user.save()
+                .then(result => {
+                    console.log(result);
+                    res.status(200).json({
+                        new_user : result
+                    })
+                }).catch(err => {
+                    res.status(500).json({
+                        error : err
+                    })
+                })
+            }
         }
+            
+        }).catch((error) => {
+            console.log(error);
+        });
+
+
+
 });
 
 });

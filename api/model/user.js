@@ -20,7 +20,12 @@ const userSchema = mongoose.Schema({
         required: true
     },
     aadhar: {
-        type: Number,
+        type: String,
+        unique: true,
+        required: true
+    },
+    pan: {
+        type: String,
         unique: true,
         required: true
     },
