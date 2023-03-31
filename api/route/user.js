@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req,res,next) => {
-    // bcrypt.hash(req.body.aadhar, 10, (err, hash) => {
+
     bcrypt.hash(req.body.password, 10, (err, hash) => {
         if(err){
             return res.status(500).json({
@@ -71,7 +71,7 @@ router.post('/signup', (req,res,next) => {
 });
 
 router.post('/login', (req, res, next) => {
-        User.find({email: req.body.email})
+        User.find({phone: req.body.phone})
         .exec()
         .then(user => {
             if(user.length < 1){
